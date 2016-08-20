@@ -1,0 +1,4 @@
+services:
+#    ehassanov_rest_generator.example:
+#        class: ehassanov\RestGeneratorBundle\Example
+#        arguments: ["@service_id", "plain_value", %parameter%]

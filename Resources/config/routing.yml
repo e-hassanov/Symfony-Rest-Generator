@@ -1,0 +1,3 @@
+ehassanov_rest_generator_homepage:
+    path:     /
+    defaults: { _controller: ehassanovRestGeneratorBundle:Default:index }
