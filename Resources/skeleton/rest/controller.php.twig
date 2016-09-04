@@ -1,0 +1,81 @@
+<?php
+
+namespace {{ namespace }}\Controller{{ entity_namespace ? '\\' ~ entity_namespace : '' }};
+
+{% block use_statements %}
+use {{ namespace }}\Entity\{{ entity }};
+use {{ namespace }}\Form\{{ entity }}Type;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+{% if 'annotation' == format -%}
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+{%- endif %}
+
+use Hateoas\Representation\CollectionRepresentation;
+use Hateoas\Representation\PaginatedRepresentation;
+use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
+use ehassanov\RestGeneratorBundle\Controller\RestController;
+{% endblock use_statements %}
+
+/**
+{% block phpdoc_class_header %}
+ * {{ entity }} controller.
+{% endblock phpdoc_class_header %}
+{% block phpdoc_class_annotations %}
+{% if 'annotation' == format %}
+ * @Route("/{{ route_prefix }}")
+{% endif %}
+{% endblock phpdoc_class_annotations %}
+ */
+{% block class_definition %}
+class {{ entity_class }}Controller extends RestController
+{% endblock class_definition %}
+{
+{% block class_body %}
+    {%- include 'rest/actions/getById.php.twig' %}
+
+    {%- include 'rest/actions/getAll.php.twig' %}
+
+    {%- include 'rest/actions/post.php.twig' %}
+
+    {%- include 'rest/actions/put.php.twig' %}
+
+    {%- include 'rest/actions/patch.php.twig' %}
+
+    {%- include 'rest/actions/delete.php.twig' %}
+
+    private function update{{entity}}(Request $request, $clearMissing)
+    {
+
+        $em = $this->get('doctrine.orm.entity_manager');
+        ${{entity}} = $em->getRepository('{{ bundle }}:{{ entity }}')
+                           ->find($request->get('id')); 
+
+
+        if (empty(${{entity}})) {
+            return new JsonResponse(['message' => '{{entity}} not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $form = $this->createForm({{entity}}Type::class, ${{entity}});
+ 
+        $form->submit($request->request->all(), $clearMissing);
+
+        if ($form->isValid()) {
+            $em = $this->get('doctrine.orm.entity_manager');
+            $em->persist(${{entity}});
+            $em->flush();
+            return ${{entity}};
+        } else {
+            return $form;
+        }
+    }
+{% endblock class_body %}
+}

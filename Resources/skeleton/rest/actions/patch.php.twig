@@ -1,0 +1,17 @@
+    /**
+    {% block phpdoc_method_header %}
+     * @Rest\View()
+     * @Rest\Patch("/{{entity|lower}}/{id}")
+     *
+{% endblock phpdoc_method_header %}
+{% block phpdoc_method_annotations %}
+{% if 'annotation' == format %}{% endif %}
+{% endblock phpdoc_method_annotations %}
+     */
+{% block method_definition %}
+    public function patch{{entity}}Action(Request $request)
+{% endblock method_definition %}
+    {
+        return $this->update{{entity}}($request, false);
+    }
+

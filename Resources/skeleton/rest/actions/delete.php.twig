@@ -1,0 +1,23 @@
+     /**
+{% block phpdoc_method_header %}
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/{{entity|lower}}/{id}")
+     *
+{% endblock phpdoc_method_header %}
+{% block phpdoc_method_annotations %}
+{% if 'annotation' == format %}{% endif %}
+{% endblock phpdoc_method_annotations %}
+     */
+{% block method_definition %}
+    public function removePlaceAction(Request $request)
+{% endblock method_definition %}
+    {
+        $em = $this->get('doctrine.orm.entity_manager');
+        $place = $em->getRepository('AppBundle:Place')
+                    ->find($request->get('id'));
+        /* @var $place Place */
+
+        $em->remove($place);
+        $em->flush();
+    }
+
