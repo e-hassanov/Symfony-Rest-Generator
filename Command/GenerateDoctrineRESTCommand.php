@@ -1,7 +1,6 @@
 <?php
 
-/*
- */
+ 
 
 namespace ehassanov\RestGeneratorBundle\Command;
 
